@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wildlife Near {{ park }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 p-6">
+  <div class="max-w-4xl mx-auto">
+    <a href="/" class="inline-block mb-4 text-green-700 hover:underline">← Search another park</a>
+
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h1 class="text-2xl font-bold text-green-800 mb-4">Wildlife Near {{ park }}</h1>
+
+      {% if park_info %}
+      <div class="mb-6 flex flex-col md:flex-row items-start md:items-center gap-4">
+        {% if park_info.image %}
+        <img src="{{ park_info.image }}" alt="Image of {{ park }}" class="w-40 rounded-xl shadow-md">
+        {% endif %}
+        <p class="text-gray-700">{{ park_info.description }}</p>
+      </div>
+      {% endif %}
+
+      {% if wildlife %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for animal in wildlife %}
+        <div class="bg-green-100 p-4 rounded-lg text-center shadow">
+          {% if animal.image %}
+          <img src="{{ animal.image }}" alt="{{ animal.name }}" class="w-full h-48 object-cover rounded-lg mb-2">
+          {% endif %}
+          <h2 class="text-lg font-semibold">{{ animal.name }}</h2>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-red-600 font-semibold">No wildlife found for this park.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

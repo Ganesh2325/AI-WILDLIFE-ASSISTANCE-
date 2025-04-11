@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Wildlife Spotting Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-green-50 font-sans p-6" id="body">
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-xl text-center">
+        <div class="flex justify-between mb-4">
+            <h1 class="text-2xl font-bold text-green-700">🦁 Wildlife Spotting Assistance </h1>
+
+        </div>
+        <form method="POST" action="/wildlife">
+            <input type="text" name="park" placeholder="Enter National Park Name" class="w-full p-3 rounded border border-gray-300 mb-4" required>
+            <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 transition">Search Wildlife</button>
+        </form>
+    </div>
+
+   
+</body>
+</html>
