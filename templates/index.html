@@ -1,219 +1,479 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
-  <meta charset="UTF-8" />
-  <title>Wildlife Spotter AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #d3f9d8, #f0fff4);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .chat-wrapper {
-      width: 100%;
-      max-width: 700px;
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      background: #2d6a4f;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    #chat-box {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .message {
-      max-width: 80%;
-      padding: 14px 18px;
-      font-size: 16px;
-      border-radius: 20px;
-      line-height: 1.6;
-      word-wrap: break-word;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .message.user {
-      align-self: flex-end;
-      background: #d8f3dc;
-      color: #1b4332;
-      border-bottom-right-radius: 0;
-    }
-
-    .message.bot {
-      align-self: flex-start;
-      background: #caf0f8;
-      color: #023e8a;
-      border-bottom-left-radius: 0;
-    }
-
-    .input-area {
-      background: #f1f5f9;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-top: 1px solid #ccc;
-    }
-
-    input[type="text"] {
-      flex-grow: 1;
-      padding: 14px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 50px;
-      background: #ffffff;
-      box-shadow: inset 2px 2px 6px #cfd8dc, inset -2px -2px 6px #ffffff;
-      outline: none;
-      transition: all 0.2s ease-in-out;
-    }
-
-    input[type="text"]:focus {
-      background-color: #eefaf2;
-      box-shadow: 0 0 0 2px #95d5b2;
-    }
-
-    button {
-      background-color: #40916c;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 12px 22px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    button:hover {
-      background-color: #2d6a4f;
-    }
-
-    img {
-      max-width: 100%;
-      max-height: 250px;
-      margin-top: 10px;
-      border-radius: 12px;
-    }
-
-    .loading-spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 3px solid #ccc;
-      border-top: 3px solid #2d6a4f;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 10px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 600px) {
-      .header {
-        font-size: 20px;
-      }
-      .message {
-        font-size: 15px;
-        max-width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            light: '#065f46',
+                            dark: '#064e3b'
+                        },
+                        secondary: {
+                            light: '#047857',
+                            dark: '#065f46'
+                        },
+                        accent: {
+                            light: '#d97706',
+                            dark: '#b45309'
+                        }
+                    },
+                    animation: {
+                        bounce: 'bounce 1.4s infinite ease-in-out both',
+                        slideInLeft: 'slideInLeft 0.3s ease-out',
+                        slideInRight: 'slideInRight 0.3s ease-out',
+                        float: 'float 15s infinite linear',
+                        ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        fadeIn: 'fadeIn 0.3s ease-in'
+                    },
+                    keyframes: {
+                        bounce: {
+                            '0%, 80%, 100%': { transform: 'scale(0)' },
+                            '40%': { transform: 'scale(1)' }
+                        },
+                        slideInLeft: {
+                            from: { transform: 'translateX(-20px)', opacity: '0' },
+                            to: { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        slideInRight: {
+                            from: { transform: 'translateX(20px)', opacity: '0' },
+                            to: { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        float: {
+                            '0%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(180deg)' },
+                            '100%': { transform: 'translateY(0) rotate(360deg)' }
+                        },
+                        fadeIn: {
+                            from: { opacity: '0' },
+                            to: { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
-  <div class="chat-wrapper">
-    <div class="header">Wildlife Spotter Assistant</div>
-    <div id="chat-box"></div>
-    <div class="input-area">
-      <input type="text" id="user-input" placeholder="Type a national park or wildlife name..." />
-      <button onclick="sendMessage()">Send</button>
+<body class="min-h-screen font-poppins light overflow-x-hidden transition-all duration-300">
+    <!-- Background Video -->
+    <video autoplay muted loop class="fixed top-0 left-0 w-full h-full object-cover z-[-2] opacity-90">
+        <source src="/static/videos/backgroundimage.mp4" type="video/mp4">
+    </video>
+    <div class="fixed top-0 left-0 w-full h-full bg-black/30 z-[-1] dark:bg-black/60"></div>
+    
+    <!-- Floating Animals -->
+    <div class="absolute w-[60px] h-[60px] bg-contain bg-no-repeat bg-center z-[-1] opacity-30 animate-float" style="top: 20%; left: 5%; background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png'); animation-delay: 0s;"></div>
+    <div class="absolute w-[60px] h-[60px] bg-contain bg-no-repeat bg-center z-[-1] opacity-30 animate-float" style="top: 70%; left: 10%; background-image: url('https://cdn-icons-png.flaticon.com/512/616/616430.png'); animation-delay: 2s;"></div>
+    <div class="absolute w-[60px] h-[60px] bg-contain bg-no-repeat bg-center z-[-1] opacity-30 animate-float" style="top: 30%; right: 5%; background-image: url('https://cdn-icons-png.flaticon.com/512/616/616412.png'); animation-delay: 4s;"></div>
+    <div class="absolute w-[60px] h-[60px] bg-contain bg-no-repeat bg-center z-[-1] opacity-30 animate-float" style="top: 80%; right: 15%; background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png'); animation-delay: 6s;"></div>
+
+    <!-- Wildlife Fact -->
+    <div class="fixed bottom-5 right-5 max-w-[300px] bg-white/90 dark:bg-gray-900/90 rounded-xl p-4 shadow-lg translate-y-[100px] opacity-0 transition-all duration-500 z-[100] hidden" id="wildlife-fact">
+        <h4 class="font-bold text-green-700 dark:text-green-300 mb-2"><i class="fas fa-lightbulb mr-2"></i>Did You Know?</h4>
+        <p class="text-sm" id="fact-text">Bengal tigers can consume up to 40 kg of meat in one meal!</p>
+        <button class="text-xs text-green-600 dark:text-green-400 mt-2" id="close-fact">Close</button>
     </div>
-  </div>
 
-  <script>
-    const inputBox = document.getElementById("user-input");
+    <!-- Chat History Sidebar -->
+    <div class="fixed top-0 left-0 h-full w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto" id="history-sidebar">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h3 class="font-bold text-lg text-green-700 dark:text-green-300"><i class="fas fa-history mr-2"></i>Chat History</h3>
+            <button id="close-history" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-2" id="history-list">
+            <!-- History items will be added here -->
+        </div>
+    </div>
 
-    inputBox.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") sendMessage();
-    });
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-green-800 dark:bg-gray-900 text-white shadow-lg transition-colors duration-300">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full bg-green-700 dark:bg-gray-800 flex items-center justify-center shadow-md">
+                            <i class="fas fa-paw text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold">Wildlife Assistant</h1>
+                            <p class="text-green-200 dark:text-green-400 text-sm">Explore India's Biodiversity</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="history-btn" class="bg-green-700 hover:bg-green-600 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 py-1 rounded-lg text-sm transition flex items-center">
+                            <i class="fas fa-history mr-2"></i> History
+                        </button>
+                        <div class="flex items-center space-x-2">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <span>Online</span>
+                        </div>
+                        <label class="relative inline-block w-[60px] h-[30px]">
+                            <input type="checkbox" id="theme-toggle" class="opacity-0 w-0 h-0">
+                            <span class="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-gray-300 rounded-[34px] transition duration-400 before:absolute before:content-[''] before:h-[22px] before:w-[22px] before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition before:duration-400">
+                                <i class="fas fa-sun absolute top-1/2 left-[6px] transform -translate-y-1/2 text-yellow-500"></i>
+                                <i class="fas fa-moon absolute top-1/2 right-[6px] transform -translate-y-1/2 text-yellow-300"></i>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    function sendMessage() {
-      const message = inputBox.value.trim();
-      if (!message) return;
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-6 flex flex-col">
+            <!-- Chat Container -->
+            <div class="backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 rounded-xl shadow-xl overflow-hidden flex-grow flex flex-col transition-colors duration-300 max-w-[800px] mx-auto h-[70vh]">
+                <!-- Chat Header -->
+                <div class="bg-green-700 dark:bg-gray-800 text-white p-4 transition-colors duration-300 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-green-600 dark:bg-gray-700 flex items-center justify-center transition-colors duration-300 shadow-inner">
+                            <i class="fas fa-leaf text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold">Wildlife Bot</h2>
+                            <p class="text-xs text-green-200 dark:text-green-300">Ask me about Indian wildlife</p>
+                        </div>
+                    </div>
+                    <button id="clear-chat" class="bg-red-500/90 hover:bg-red-600/90 text-white px-3 py-1 rounded-lg text-sm transition flex items-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Clear Chat
+                    </button>
+                </div>
 
-      appendMessage("user", message);
-      inputBox.value = "";
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="flex-grow p-4 overflow-y-auto space-y-4">
+                    <!-- Welcome Message -->
+                    <div class="bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-300 p-4 rounded transition-colors duration-300 animate-slideInLeft">
+                        <p class="font-bold text-green-700 dark:text-green-300">Namaste! <span class="text-yellow-600 dark:text-yellow-400">🙏</span> I'm your Wildlife Assistant.</p>
+                        <p class="mt-2">I can help you explore India's rich biodiversity, national parks, and wildlife species.</p>
+                        <p class="mt-2">Try asking:</p>
+                        <ul class="list-disc list-inside mt-1">
+                            <li>"Tell me about Jim Corbett National Park"</li>
+                            <li>"Show elephants in India"</li>
+                            <li>"Compare Ranthambore and Bandhavgarh"</li>
+                            <li>"Parks in Karnataka"</li>
+                        </ul>
+                    </div>
+                </div>
 
-      const loadingId = appendLoading();
+                <!-- Quick Query Buttons -->
+                <div class="px-4 pb-2">
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="quick-query-btn bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-xs shadow hover:shadow-md">
+                            <i class="fas fa-tree mr-1"></i> Jim Corbett
+                        </button>
+                        <button class="quick-query-btn bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-xs shadow hover:shadow-md">
+                            <i class="fas fa-paw mr-1"></i> Bengal Tiger
+                        </button>
+                        <button class="quick-query-btn bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-all duration-300 flex items-center justify-center text-xs shadow hover:shadow-md">
+                            <i class="fas fa-water mr-1"></i> Kaziranga
+                        </button>
+                    </div>
+                </div>
 
-      fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      })
-        .then(res => res.json())
-        .then(data => {
-          removeLoading(loadingId);
-          appendMessage("bot", data.reply);
+                <!-- Chat Input -->
+                <div class="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+                    <form id="chat-form" class="flex space-x-2">
+                        <input 
+                            type="text" 
+                            id="message-input" 
+                            placeholder="Ask about wildlife or national parks..." 
+                            class="flex-grow px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors duration-300 shadow-inner"
+                            autocomplete="off"
+                        >
+                        <button 
+                            type="submit" 
+                            class="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center shadow-md hover:shadow-lg"
+                        >
+                            <span>Send</span>
+                            <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Try: "Tell me about Kaziranga National Park" or "What is the status of Indian elephants?"</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-green-900 dark:bg-gray-900 text-white py-4 transition-colors duration-300">
+            <div class="container mx-auto px-4 text-center text-sm">
+                <p><i class="fas fa-paw mr-1"></i> Wildlife Assistant &copy; 2025 | Government of India</p>
+                <p class="mt-1 text-green-300 dark:text-green-400">Made with <i class="fas fa-heart text-red-400"></i> for nature lovers</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const themeToggle = document.getElementById('theme-toggle');
+            const clearChatBtn = document.getElementById('clear-chat');
+            const wildlifeFact = document.getElementById('wildlife-fact');
+            const factText = document.getElementById('fact-text');
+            const closeFactBtn = document.getElementById('close-fact');
+            const historyBtn = document.getElementById('history-btn');
+            const historySidebar = document.getElementById('history-sidebar');
+            const closeHistoryBtn = document.getElementById('close-history');
+            const historyList = document.getElementById('history-list');
+            
+            // Initialize chat history from localStorage
+            let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+            
+            const wildlifeFacts = [
+                "India is home to 70% of the world's tiger population.",
+                "The Indian elephant is slightly smaller than its African cousin but has larger ears.",
+                "Kaziranga National Park has 2/3 of the world's great one-horned rhinoceroses.",
+                "The Sundarbans is the only mangrove forest in the world where tigers are found.",
+                "Jim Corbett National Park is India's oldest national park, established in 1936.",
+                "The Asiatic lion found in Gir Forest is slightly smaller than African lions.",
+                "Indian leopards are excellent climbers and often drag their prey up trees.",
+                "The Indian python is one of the largest snake species in the world.",
+                "Ranthambore National Park is famous for its tigers that often visit the historic fort.",
+                "The Great Indian Hornbill has a wingspan of up to 5 feet and is considered sacred by some tribes."
+            ];
+            
+            function showRandomFact() {
+                factText.textContent = wildlifeFacts[Math.floor(Math.random() * wildlifeFacts.length)];
+                wildlifeFact.classList.remove('hidden');
+                setTimeout(() => {
+                    wildlifeFact.style.transform = 'translateY(0)';
+                    wildlifeFact.style.opacity = '1';
+                }, 100);
+                
+                setTimeout(hideFact, 8000);
+            }
+            
+            function hideFact() {
+                wildlifeFact.style.transform = 'translateY(100px)';
+                wildlifeFact.style.opacity = '0';
+                setTimeout(() => {
+                    wildlifeFact.classList.add('hidden');
+                }, 500);
+            }
+            
+            setTimeout(showRandomFact, 10000);
+            setInterval(showRandomFact, 60000);
+            
+            closeFactBtn.addEventListener('click', hideFact);
+            
+            // Theme handling
+            if (localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                themeToggle.checked = true;
+            }
+            
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // History sidebar toggle
+            historyBtn.addEventListener('click', function() {
+                historySidebar.style.transform = 'translateX(0)';
+                renderHistoryList();
+            });
+            
+            closeHistoryBtn.addEventListener('click', function() {
+                historySidebar.style.transform = 'translateX(-100%)';
+            });
+            
+            // Render chat history list
+            function renderHistoryList() {
+                historyList.innerHTML = '';
+                
+                if (chatHistory.length === 0) {
+                    historyList.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">No chat history yet</p>';
+                    return;
+                }
+                
+                chatHistory.forEach((chat, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'p-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200';
+                    historyItem.innerHTML = `
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">${chat.message}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${new Date(chat.timestamp).toLocaleString()}</p>
+                    `;
+                    
+                    historyItem.addEventListener('click', function() {
+                        // Clear current chat
+                        while (chatMessages.children.length > 1) {
+                            chatMessages.removeChild(chatMessages.lastChild);
+                        }
+                        
+                        // Add the selected chat history
+                        addMessage(chat.message, true);
+                        addMessage(chat.reply);
+                        
+                        // Close the sidebar
+                        historySidebar.style.transform = 'translateX(-100%)';
+                    });
+                    
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            // Clear chat function
+            clearChatBtn.addEventListener('click', function() {
+                while (chatMessages.children.length > 1) {
+                    chatMessages.removeChild(chatMessages.lastChild);
+                }
+                
+                const confirmationMsg = document.createElement('div');
+                confirmationMsg.className = 'bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-300 p-4 rounded mr-8 transition-colors duration-300 animate-slideInLeft';
+                confirmationMsg.innerHTML = '<p>Chat history has been cleared. How can I help you explore India\'s wildlife today?</p>';
+                chatMessages.appendChild(confirmationMsg);
+                scrollToBottom();
+            });
+            
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addMessage(message, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser 
+                    ? 'user-message p-4 rounded ml-8 transition-colors duration-300 bg-blue-100/10 dark:bg-blue-900/20 border-l-4 border-blue-500/80 dark:border-blue-300/60 animate-slideInRight' 
+                    : 'bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-300 p-4 rounded mr-8 transition-colors duration-300 animate-slideInLeft';
+                
+                // Simple formatting for links and bold text
+                let formattedMessage = message
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Markdown bold
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-green-600 dark:text-green-400 underline">$1</a>'); // Markdown links
+                
+                messageDiv.innerHTML = formattedMessage;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+        
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'bg-gray-100 dark:bg-gray-800 border-l-4 border-gray-500 dark:border-gray-400 p-4 rounded mr-8 transition-colors duration-300';
+                typingDiv.id = 'typing-indicator';
+                typingDiv.innerHTML = `
+                    <div class="flex items-center text-gray-700 dark:text-gray-300">
+                        <div class="flex items-center [&>span]:w-2 [&>span]:h-2 [&>span]:mx-[2px] [&>span]:bg-current [&>span]:rounded-full [&>span]:inline-block [&>span]:animate-bounce">
+                            <span style="animation-delay: -0.32s"></span>
+                            <span style="animation-delay: -0.16s"></span>
+                            <span></span>
+                        </div>
+                        <span class="ml-2">Wildlife Bot is typing...</span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                scrollToBottom();
+            }
+            
+            function hideTyping() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+            
+            // Save chat to history
+            function saveToHistory(message, reply) {
+                const chatEntry = {
+                    message: message,
+                    reply: reply,
+                    timestamp: new Date().toISOString()
+                };
+                
+                chatHistory.unshift(chatEntry); // Add to beginning of array
+                
+                // Keep only the last 50 chats
+                if (chatHistory.length > 50) {
+                    chatHistory.pop();
+                }
+                
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            }
+            
+            // Send message to Flask backend
+            async function sendMessageToBackend(message) {
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    const data = await response.json();
+                    return data.reply;
+                } catch (error) {
+                    console.error('Error:', error);
+                    return `<div class="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-300 p-4 rounded">
+                        <p>Sorry, I encountered an error processing your request. Please try again later.</p>
+                    </div>`;
+                }
+            }
+            
+            chatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+                
+                if (message) {
+                    addMessage(message, true);
+                    messageInput.value = '';
+                
+                    showTyping();
+            
+                    try {
+                        const reply = await sendMessageToBackend(message);
+                        hideTyping();
+                        addMessage(reply);
+                        saveToHistory(message, reply);
+                    } catch (error) {
+                        hideTyping();
+                        addMessage("Sorry, I couldn't process your request. Please try again.");
+                        console.error(error);
+                    }
+                }
+            });
+            
+            // Quick query buttons
+            document.querySelectorAll('.quick-query-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const query = this.textContent.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+                    messageInput.value = query;
+                    chatForm.dispatchEvent(new Event('submit'));
+                });
+            });
+            
+            // Focus on input when clicking anywhere in the chat container
+            document.querySelector('#chat-messages').addEventListener('click', function() {
+                messageInput.focus();
+            });
+            
+            messageInput.focus();
         });
-    }
-
-    function appendMessage(sender, message) {
-      const chatBox = document.getElementById("chat-box");
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.innerHTML = message;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function appendLoading() {
-      const chatBox = document.getElementById("chat-box");
-      const loadingMsg = document.createElement("div");
-      const loadingId = "loading-" + Date.now();
-      loadingMsg.id = loadingId;
-      loadingMsg.className = "message bot";
-      loadingMsg.innerHTML = `<span class="loading-spinner"></span> Fetching info...`;
-      chatBox.appendChild(loadingMsg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      return loadingId;
-    }
-
-    function removeLoading(id) {
-      const elem = document.getElementById(id);
-      if (elem) elem.remove();
-    }
-  </script>
+    </script>
 </body>
 </html>
